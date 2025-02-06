@@ -4,7 +4,7 @@ from pygame import *
 # parent class for sprites
 class GameSprite(sprite.Sprite):
     # class constructor
-    def __init__(self, player_image, player_x, player_y, size_x, size_y, player_speed):
+    def __init__(self, player_image, player_x, player_y, player_speed, size_x, size_y):
         # Call for the class (Sprite) constructor:
         sprite.Sprite.__init__(self)
 
@@ -57,6 +57,9 @@ finish = False
 clock = time.Clock()
 FPS = 60
 
+speed_x = 3
+speed_y = 3
+
 while run:
     for e in event.get():
         if e.type == QUIT:
@@ -66,9 +69,20 @@ while run:
         window.fill(back)
         racket1.update_l()
         racket2.update_r()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+        # if the ball reaches screen edges, change its movement direction
+        if ball.rect.y > win_height - 50 or ball.rect.y < 0:
+            speed_y *= -1
+
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            speed_x *= -1
+        speed_y *= 1
 
         racket1.reset()
         racket2.reset()
+        ball.reset()
 
     display.update()
     clock.tick(FPS)
